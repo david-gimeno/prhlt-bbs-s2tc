@@ -25,20 +25,20 @@ if __name__ == "__main__":
     dst_token_list_path = dst_spm_prefix+".token"
 
     # -- obtaining split
-    transcription_split = pd.read_csv(args.split_path)["transcription_path"].tolist()
+    transcription_split = pd.read_csv(args.split_path)["sentence"].tolist()
 
     # -- processing database transcriptions defined by the split
 
     with open(dst_training_text_path, "w") as w:
-        for transcription_path in tqdm(transcription_split):
-            with open(transcription_path, "r") as r:
-                # -- reading database transcriptions
-                transcription = r.read().strip().upper().replace("{", "").replace("}","")
+        for transcription in tqdm(transcription_split):
+            # -- reading sample transcription
+            transcription = transcription.strip().lower()
 
-                # -- writing text file for training the SentencePiece model
-                w.write(transcription + "\n")
+            # -- writing text file for training the SentencePiece model
+            w.write(transcription + "\n")
 
     # -- estimating Sentencepiece model
+    #    f"--user_defined_symbols=<blank>,<sos/eos>,<ES>,<EU>,<BI> "
     spm.SentencePieceTrainer.train(
         f"--input={dst_training_text_path} "
         f"--model_prefix={dst_spm_prefix} "

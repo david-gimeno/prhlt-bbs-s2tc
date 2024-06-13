@@ -7,7 +7,6 @@ import torch
 from typeguard import check_argument_types, check_return_type
 
 from src.frontend.conv3d_resnet18.conv3d_resnet18  import Conv3dResNet18
-from src.encoder.ma_conformer.encoder import MaConformerEncoder
 from src.encoder.my_branchformer.encoder import MyBranchformerEncoder
 
 from src.ctc.ctc import CTC
@@ -150,7 +149,6 @@ encoder_choices = ClassChoices(
     "encoder",
     classes=dict(
         conformer=ConformerEncoder,
-        ma_conformer=MaConformerEncoder,
         transformer=TransformerEncoder,
         transformer_multispkr=TransformerEncoderMultiSpkr,
         contextual_block_transformer=ContextualBlockTransformerEncoder,

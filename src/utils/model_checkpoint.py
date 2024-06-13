@@ -3,8 +3,6 @@ import torch
 import pandas as pd
 from collections import OrderedDict
 
-from src.adapters.bapna_adapter import Adapter
-
 def load_frontend_lrw(e2e, checkpoint, module_name):
     frontend_lrw = OrderedDict()
     for key in checkpoint.keys():
@@ -94,10 +92,6 @@ def set_bn_eval(module):
     if isinstance(module, torch.nn.modules.batchnorm._BatchNorm):
         module.eval()
 
-def set_eval_mode_except_adapters(module):
-    if not isinstance(module, Adapter):
-        module.eval()
-
 def freeze_e2e(e2e, modules, config):
     if "no-frozen" not in modules:
         for module in modules:
@@ -124,13 +118,7 @@ def freeze_e2e(e2e, modules, config):
                 else:
                     raise RuntimeError("The end-to-end model does not have a CTC-based decoding branch!")
     else:
-        if config.encoder_conf['use_adapters'] or config.decoder_conf['use_adapters']:
-            print("Freezing every layer in the model except for the injected adapter layers")
-            for name, param in e2e.named_parameters():
-                if "adapter" not in name: # and ("ctc" not in name):
-                    param.requires_grad = False
-        else:
-            print("The entire E2E system will be trained")
+        print("The entire E2E system will be trained")
 
 def save_model(output_dir, model, suffix):
     dst_root = output_dir + "/models/"
