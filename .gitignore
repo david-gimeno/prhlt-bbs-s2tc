@@ -2,6 +2,7 @@ logs/
 exps/
 paper_report/
 splits/bbs-s2tc/
+src/tokenizers/spm/bbs-s2tc/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

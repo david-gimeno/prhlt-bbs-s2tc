@@ -11,9 +11,9 @@ if __name__ == "__main__":
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
     )
 
-    parser.add_argument("--split-path", default="./splits/training/speaker-independent/lrs2bbc+lrs3ted.csv", type=str, help="The split which will indicate the transcriptions to read")
-    parser.add_argument("--dst-spm-dir", default="./tokenizers/spm/english/LRS2BBC+LRS3TED/", type=str, help="Directory where the tokenizer will be stored")
-    parser.add_argument("--spm-name", default="lrs2bbc+lrs3ted_256vocab", type=str, help="Name of the tokenizer")
+    parser.add_argument("--split-path", default="./splits/bbs-s2tc/train_clean.csv", type=str, help="The split which will indicate the transcriptions to read")
+    parser.add_argument("--dst-spm-dir", default="./tokenizers/spm/bbs-s2tc/", type=str, help="Directory where the tokenizer will be stored")
+    parser.add_argument("--spm-name", default="train_clean", type=str, help="Name of the tokenizer")
     parser.add_argument("--vocab-size", default=256, type=int, help="The size of the tokenizer's vocabulary, including special symbols")
 
     args = parser.parse_args()
@@ -28,7 +28,6 @@ if __name__ == "__main__":
     transcription_split = pd.read_csv(args.split_path)["sentence"].tolist()
 
     # -- processing database transcriptions defined by the split
-
     with open(dst_training_text_path, "w") as w:
         for transcription in tqdm(transcription_split):
             # -- reading sample transcription
