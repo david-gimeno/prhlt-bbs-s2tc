@@ -1,9 +1,7 @@
 logs/
 exps/
-splits/train.csv
-splits/train_clean.csv
-splits/dev.csv
-splits/test.csv
+paper_report/
+splits/bbs-s2tc/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

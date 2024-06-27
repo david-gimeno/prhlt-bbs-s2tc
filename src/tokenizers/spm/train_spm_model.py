@@ -38,11 +38,10 @@ if __name__ == "__main__":
             w.write(transcription + "\n")
 
     # -- estimating Sentencepiece model
-    #    f"--user_defined_symbols=<blank>,<sos/eos>,<ES>,<EU>,<BI> "
     spm.SentencePieceTrainer.train(
         f"--input={dst_training_text_path} "
         f"--model_prefix={dst_spm_prefix} "
-        f"--user_defined_symbols=<blank>,<sos/eos> "
+        f"--user_defined_symbols=<blank>,<sos/eos>,<ES>,<EU>,<BI> "
         f"--unk_id=1 "
         f"--bos_id=-1 "
         f"--eos_id=-1 "

@@ -92,7 +92,7 @@ class Speech2Text:
     @torch.no_grad()
     def __call__(
         self, speech: Union[torch.Tensor, np.ndarray]
-    ) -> List[Tuple[Optional[str], List[str], List[int], Hypothesis]]:
+    ) -> List[Tuple[Optional[str], List[str], List[int], Hypothesis, Optional[str]]]:
         """Inference
 
         Args:
@@ -120,6 +120,7 @@ class Speech2Text:
         enc, _ = self.asr_model.encode(**batch)
 
         if isinstance(enc, tuple):
+            intermediate_outs = enc[1]
             enc = enc[0]
         assert len(enc) == 1, len(enc)
 
@@ -140,7 +141,18 @@ class Speech2Text:
             text = self.tokenizer.tokens2text(token)
         else:
             text = None
-        results = [(text, token, token_int, hyp)]
+
+        # language identification from first intermediate output
+        lang_intermediate_out = intermediate_outs[0][-1]
+        lang_ctc_out = self.asr_model.ctc.log_softmax(lang_intermediate_out)
+        lang_ctc_probs, lang_ctc_ids = torch.exp(lang_ctc_out).max(dim=-1)
+
+        # remove blank symbols
+        lang_token_int = list(filter(lambda x: x != 0, lang_ctc_ids[0].tolist()))
+        lang_token = self.converter.ids2tokens(lang_token_int)[0]
+        lang_id = self.tokenizer.tokens2text(lang_token).strip()
+
+        results = [(text, token, token_int, hyp, lang_id)]
 
         assert check_return_type(results)
         return results

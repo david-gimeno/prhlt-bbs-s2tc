@@ -96,8 +96,8 @@ aux_ctc_tasks: ["lid_utt"]
 
 # inference related
 inference_conf:
-  maskctc_n_iterations: 10
-  maskctc_threshold_probability: 0.99
+  maskctc_n_iterations: 5
+  maskctc_threshold_probability: 0.9
   device: "cpu"
 
 # token related
@@ -115,7 +115,7 @@ training_settings:
   noam_factor: 1.6
   accum_grad: 1
   grad_clip: -1.0
-  epochs: 100
+  epochs: 50
   average_epochs: 10
   use_amp: false
   num_workers: 8

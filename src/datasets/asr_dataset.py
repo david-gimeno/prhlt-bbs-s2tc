@@ -10,20 +10,27 @@ class ASRDataset(Dataset):
     """Dataset to load the BBS-S2TC data.
     """
 
-    def __init__(self, config, dataset_path, filter_spkr_ids=['all-spkrs']):
+    def __init__(self, config, dataset_path, filter_spkr_ids=['all-spkrs'], filter_by_language=['all-langs']):
         # -- config
         self.config = config
 
         # -- reading dataset
-        self.dataset = pd.read_csv(dataset_path, delimiter=',')
+        self.dataset = pd.read_csv(dataset_path, delimiter=',', dtype={"speaker_id": "string"})
         self.dataset['sample_id'] = self.dataset['path'].map(lambda x: x.split('/')[-1])
 
         # prctg = int(len(self.dataset) * 0.1)
         # self.dataset = self.dataset[:prctg]
 
+        # -- filtering by duration
+        self.dataset = self.dataset[self.dataset['length'] <= 13]
+
         # -- filtering targeted speakers
         if 'all-spkrs' not in filter_spkr_ids:
             self.dataset = self.dataset[self.dataset['speaker_id'].isin(filter_spkr_ids)]
+
+        # -- filtering targeted language
+        if 'all-langs' not in filter_by_language:
+            self.dataset = self.dataset[self.dataset['language'].isin(filter_by_language)]
 
     def __len__(self):
         return len(self.dataset)

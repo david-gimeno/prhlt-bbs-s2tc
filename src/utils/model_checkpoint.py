@@ -72,7 +72,7 @@ def average_model(e2e, checkpoint_paths):
     """
     average_model = {}
     for checkpoint_path in checkpoint_paths:
-        model = torch.load(checkpoint_path)
+        model = torch.load(checkpoint_path, map_location=torch.device('cpu'))
 
         model_keys = list(model.keys())
         for k in model_keys:

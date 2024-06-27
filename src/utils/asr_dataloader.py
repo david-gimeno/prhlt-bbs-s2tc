@@ -4,13 +4,14 @@ import torch.nn as nn
 import torch.utils.data as data
 from src.datasets import ASRDataset
 
-def get_dataloader(config, dataset_path, audio_transforms, tokenizer, converter, filter_spkr_ids=['all-spkrs'], is_training=True):
+def get_dataloader(config, dataset_path, audio_transforms, tokenizer, converter, filter_spkr_ids=['all-spkrs'], filter_by_language=['all-langs'], is_training=True):
 
     # -- defining dataset
     dataset = ASRDataset(
         config,
         dataset_path=dataset_path,
         filter_spkr_ids=filter_spkr_ids,
+        filter_by_language=filter_by_language,
     )
 
     # -- defining dataloader
