@@ -102,8 +102,8 @@ inference_conf:
 
 # token related
 token_type: bpe
-bpemodel: "./src/tokenizers/spm/bbs-s2tc/256vocab/all_train_clean_lang.model"
-token_list: "./src/tokenizers/spm/bbs-s2tc/256vocab/all_train_clean_lang.token"
+bpemodel: "./src/tokenizers/spm/bbs-s2tc/256vocab/all_clean_data+langs.model"
+token_list: "./src/tokenizers/spm/bbs-s2tc/256vocab/all_clean_data+langs.token"
 
 # training related
 training_settings:
