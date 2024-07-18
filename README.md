@@ -90,7 +90,7 @@ The paper is currently under review for the [IberSpeech 2024](https://iberspeech
 
 ```
 @inproceedings{gimeno2025tailored,
-  author={Gimeno-G{\'o}mez, David and Carlos-D. Martínez-Hinarejos},
+  author={Gimeno-G{\'o}mez, David and Carlos-D. Mart{\'i}nez-Hinarejos},
   title={{The PRHLT Speech Recognition System the Bilingual Basque-Spanish Speech to Text Albayzín Challenge}},
   booktitle={},
   volume={},
