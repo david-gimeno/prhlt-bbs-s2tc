@@ -40,7 +40,13 @@ path,language,speaker_id,PRR,length,sentence
 
 ## <a name="training"></a> 💪 Training
 
-The following command represents the training and inference of a non-autoregressive Conformer-based Mask-CTC model with Hierarchical Language Identification on the official traninig set of the challenge:
+The entire pipeline including tokenizer building and model estimation can be simply performed by running:
+
+```
+bash run.sh
+```
+
+If you are interested in conducting further experiments, the following command represents the training and inference of our best-performing model for the challenge:
 
 ```
 python asr_main.py \
@@ -49,8 +55,9 @@ python asr_main.py \
   --test-dataset ./splits/bbs-s2tc/test.csv \
   --config-file ./configs/asr/conformer+hierlidutt_maskctc.yaml \
   --mode both \
+  --filter-by-language all-langs \
   --output-dir ./exps/bbs-s2tc/ \
-  --output-name test-liprtve-si-finetuned-from-english \
+  --output-name test_all-langs \
   --yaml-overrides training_settins:batch_size:16
 ```
 
@@ -60,7 +67,7 @@ Our best-performing model checkpoint for the challenge is publicly available in 
 
 ## <a name="inference"></a> 🔮 Inference
 
-You can check the performance achieved by already estimated models by running the following command:
+You can check the performance achieved by already estimated models, even specifying your language of interest, by running the following command:
 
 ```
 python asr_main.py \
@@ -68,9 +75,9 @@ python asr_main.py \
   --config-file ./configs/asr/conformer+hierlidutt_maskctc.yaml \
   --load-checkpoint ./exps/bbs-s2tc/models/model_average.pth \
   --mode inference \
-  --filter-by-language all-langs \
+  --filter-by-language eu \
   --output-dir ./exps/bbs-s2tc/ \
-  --output-name test_all-langs \
+  --output-name test_eu \
 ```
 
 ## <a name="results"></a> 📊 Results
