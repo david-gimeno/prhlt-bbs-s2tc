@@ -3,6 +3,7 @@ from contextlib import contextmanager
 from typing import Dict, List, Optional, Tuple, Union
 
 import torch
+import numpy as np
 from packaging.version import parse as V
 from typeguard import check_argument_types
 
@@ -67,6 +68,7 @@ class ESPnetASRModel(AbsESPnetModel):
         # Pretrained HF Tokenizer needs custom sym_sos and sym_eos
         sym_sos: str = "<sos/eos>",
         sym_eos: str = "<sos/eos>",
+        language_balanced_loss: bool = False,
         extract_feats_in_collect_stats: bool = True,
         lang_token_id: int = -1,
     ):
@@ -189,6 +191,7 @@ class ESPnetASRModel(AbsESPnetModel):
         else:
             self.ctc = ctc
 
+        self.language_balanced_loss = language_balanced_loss
         self.extract_feats_in_collect_stats = extract_feats_in_collect_stats
 
         self.is_encoder_whisper = "Whisper" in type(self.encoder).__name__
@@ -347,6 +350,22 @@ class ESPnetASRModel(AbsESPnetModel):
             stats["acc"] = acc_att
             stats["cer"] = cer_att
             stats["wer"] = wer_att
+
+            if self.language_balanced_loss:
+                total_nsamples = encoder_out.size(0)
+
+                # -- computing language ratios
+                languages = np.array(kwargs.get('language'))
+                lang_ids, lang_counts = languages.unique(return_counts=True)
+                lang_ratios = 1 / torch.sqrt(lang_counts / total_nsamples)
+
+                # -- mapping language ids to language ratios
+                language_ratios = torch.zeros(languages.shape).to(encoder_out.device)
+                for lang_id, lang_ratio in zip(lang_ids, lang_ratios):
+                    languages_ratios[languages == lang_id] = lang_ratio
+
+                loss = loss * languages_ratios # -- applying language balance
+                loss = loss.sum() / total_nsamples # -- batch average
 
         # Collect total loss stats
         stats["loss"] = loss.detach()

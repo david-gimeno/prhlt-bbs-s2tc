@@ -83,6 +83,7 @@ model_conf:
   interctc_weight: 0.0
   ignore_id: -1
   lsm_weight: 0.1
+  language_balanced_loss: false
   length_normalized_loss: false
   report_cer: true
   report_wer: false
@@ -100,8 +101,8 @@ inference_conf:
 
 # token related
 token_type: bpe
-bpemodel: "./src/tokenizers/spm/bbs-s2tc/256vocab/all_train_clean.model"
-token_list: "./src/tokenizers/spm/bbs-s2tc/256vocab/all_train_clean.token"
+bpemodel: "./src/tokenizers/spm/bbs-s2tc/256vocab/all_clean_data+langs.model"
+token_list: "./src/tokenizers/spm/bbs-s2tc/256vocab/all_clean_data+langs.token"
 
 # training related
 training_settings:

@@ -83,6 +83,7 @@ model_conf:
   interctc_weight: 0.5
   ignore_id: -1
   lsm_weight: 0.1
+  language_balanced_loss: false
   length_normalized_loss: false
   report_cer: true
   report_wer: false

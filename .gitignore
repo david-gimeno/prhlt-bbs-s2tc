@@ -1,5 +1,6 @@
 logs/
 exps/
+models_for_submission/
 paper_report/
 splits/bbs-s2tc/
 src/tokenizers/spm/bbs-s2tc/

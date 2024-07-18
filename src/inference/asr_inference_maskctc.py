@@ -149,8 +149,11 @@ class Speech2Text:
 
         # remove blank symbols
         lang_token_int = list(filter(lambda x: x != 0, lang_ctc_ids[0].tolist()))
-        lang_token = self.converter.ids2tokens(lang_token_int)[0]
-        lang_id = self.tokenizer.tokens2text(lang_token).strip()
+        if len(lang_token_int) > 0:
+            lang_token = self.converter.ids2tokens(lang_token_int)
+            lang_id = self.tokenizer.tokens2text(lang_token[0]).strip()
+        else:
+            lang_id = None
 
         results = [(text, token, token_int, hyp, lang_id)]
 

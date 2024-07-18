@@ -65,6 +65,7 @@ class MaskCTCModel(ESPnetASRModel):
         sym_space: str = "<space>",
         sym_blank: str = "<blank>",
         sym_mask: str = "<mask>",
+        language_balanced_loss: bool = False,
         extract_feats_in_collect_stats: bool = True,
     ):
         assert check_argument_types()
@@ -91,6 +92,7 @@ class MaskCTCModel(ESPnetASRModel):
             report_wer=report_wer,
             sym_space=sym_space,
             sym_blank=sym_blank,
+            language_balanced_loss=language_balanced_loss,
             extract_feats_in_collect_stats=extract_feats_in_collect_stats,
         )
 
@@ -225,6 +227,22 @@ class MaskCTCModel(ESPnetASRModel):
             loss = loss_ctc
         else:
             loss = self.ctc_weight * loss_ctc + (1 - self.ctc_weight) * loss_mlm
+
+        if self.language_balanced_loss:
+            total_nsamples = encoder_out.size(0)
+
+            # -- computing language ratios
+            languages = np.array(kwargs.get('language'))
+            lang_ids, lang_counts = languages.unique(return_counts=True)
+            lang_ratios = 1 / torch.sqrt(lang_counts / total_nsamples)
+
+            # -- mapping language ids to language ratios
+            language_ratios = torch.zeros(languages.shape).to(encoder_out.device)
+            for lang_id, lang_ratio in zip(lang_ids, lang_ratios):
+                languages_ratios[languages == lang_id] = lang_ratio
+
+            loss = loss * languages_ratios # -- applying language balance
+            loss = loss.sum() / total_nsamples # -- batch average
 
         # Collect MLM branch stats
         stats["loss_mlm"] = loss_mlm.detach() if loss_mlm is not None else None

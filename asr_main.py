@@ -10,6 +10,7 @@ from espnet2.torch_utils.model_summary import model_summary
 import os
 import sys
 import yaml
+import random
 import argparse
 from tqdm import tqdm
 from colorama import Fore
@@ -86,24 +87,41 @@ def inference(output_dir, speech2text, eval_loader, dataset):
             for batch in tqdm(eval_loader, position=0, leave=True, file=sys.stdout, bar_format="{l_bar}%s{bar:10}%s{r_bar}" % (Fore.YELLOW, Fore.RESET)):
                 result = speech2text(torch.squeeze(batch['speech'], 0))
 
-                # -- dumping results
                 hyp = result[0][0]
-                f.write(batch['ref'][0].strip() + "#" + hyp.strip() + "\n")
 
-                # -- language identification
-                lang_preds.append( lang_mapping[result[0][-1]] )
-                lang_refs.append( lang_mapping[batch['language'][0]] )
+                if args.output_for_submission:
+                    sample_id = os.path.basename(batch['path'])
+                    with open(args.output_for_submission; 'w', encoding='utf-8') as f:
+                        f.write(f'{sample_id} {hyp.strip()}\n')
 
-    # -- computing WER
-    lang_acc = accuracy_score(lang_refs, lang_preds)
-    wer, cer, ci_wer, ci_cer = compute_bootstrap_wer(dst_path)
-    report_wer = "%WER: " + str(wer) + " ± " + str(ci_wer); print(f"\n{report_wer}")
-    report_cer = "%CER: " + str(cer) + " ± " + str(ci_cer); print(report_cer)
-    report_lid = "%LID: " + str(lang_acc); print(report_lid)
-    with open(dst_path.replace(".inf", ".wer"), "w", encoding="utf-8") as f:
-        f.write(report_wer + "\n")
-        f.write(report_cer + "\n")
-        f.write(report_lid + "\n")
+                else:
+                    # -- dumping results
+                    f.write(batch['ref'][0].strip() + "#" + hyp.strip() + "\n")
+
+                    # -- language identification
+                    lang_hyp = result[0][-1]
+                    lang_ref = batch['language'][0]
+                    if lang_hyp is not None:
+                        lang_preds.append( lang_mapping[lang_hyp] )
+                    else:
+                        lang_choices = list(set(lang_mapping.values()) - set([lang_mapping[lang_ref]]))
+                        lang_preds.append( random.sample(lang_choices, 1)[0] )
+
+                    lang_refs.append( lang_mapping[lang_ref] )
+
+    if args.output_for_submssion:
+        print("You can check the output for the challenge submission in {args.output_for_submission}!")
+    else:
+        # -- computing WER
+        lang_acc = accuracy_score(lang_refs, lang_preds)
+        wer, cer, ci_wer, ci_cer = compute_bootstrap_wer(dst_path)
+        report_wer = "%WER: " + str(wer) + " ± " + str(ci_wer); print(f"\n{report_wer}")
+        report_cer = "%CER: " + str(cer) + " ± " + str(ci_cer); print(report_cer)
+        report_lid = "%LID: " + str(lang_acc); print(report_lid)
+        with open(dst_path.replace(".inf", ".wer"), "w", encoding="utf-8") as f:
+            f.write(report_wer + "\n")
+            f.write(report_cer + "\n")
+            f.write(report_lid + "\n")
 
     # -- computing confusion matrix
     cm = confusion_matrix(lang_refs, lang_preds)
@@ -135,6 +153,7 @@ if __name__ == "__main__":
 
     parser.add_argument("--output-dir", required=True, type=str, help="Path to save the fine-tuned model and its inference hypothesis")
     parser.add_argument("--output-name", required=True, type=str, help="Name of the file where the hypothesis and results will be write down.")
+    parser.add_argument("--output-for-submission", default='', type=str, help='Specified output path if you want the expected output for the challenge submission')
 
     args = parser.parse_args()
 
@@ -185,8 +204,8 @@ if __name__ == "__main__":
 
         # -- -- training process
 
-        # e = 10
-        # spe = 20684
+        # e = 0
+        # spe = 20973
         # for e in range(e*spe):
         #     optimizer.step()
 
