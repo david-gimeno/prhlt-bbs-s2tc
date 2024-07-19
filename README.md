@@ -89,9 +89,9 @@ Detailed discussion on these results both for Spanish and Basque languages can b
 The paper is currently under review for the [IberSpeech 2024](https://iberspeech.tech/) conference.
 
 ```
-@inproceedings{gimeno2025tailored,
+@inproceedings{gimeno2024bbss2tc,
   author={Gimeno-G{\'o}mez, David and Carlos-D. Mart{\'i}nez-Hinarejos},
-  title={{The PRHLT Speech Recognition System the Bilingual Basque-Spanish Speech to Text Albayzín Challenge}},
+  title={{The PRHLT Speech Recognition System for the Albayzin 2024 Bilingual Basque-Spanish Speech to Text Challenge}},
   booktitle={},
   volume={},
   pages={}
