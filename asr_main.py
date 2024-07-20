@@ -90,8 +90,8 @@ def inference(output_dir, speech2text, eval_loader, dataset):
                 hyp = result[0][0]
 
                 if args.output_for_submission:
-                    sample_id = os.path.basename(batch['path'])
-                    with open(args.output_for_submission; 'w', encoding='utf-8') as f:
+                    sample_id = batch['sample_id'][0]
+                    with open(args.output_for_submission, 'a', encoding='utf-8') as f:
                         f.write(f'{sample_id} {hyp.strip()}\n')
 
                 else:
