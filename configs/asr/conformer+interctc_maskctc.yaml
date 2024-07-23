@@ -118,6 +118,7 @@ training_settings:
   average_epochs: 10
   use_amp: false
   num_workers: 8
+  balanced_finetuning: false
 
 dtype: "float32"
 device: "cuda"

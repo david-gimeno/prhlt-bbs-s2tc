@@ -109,7 +109,7 @@ def inference(output_dir, speech2text, eval_loader, dataset):
 
                     lang_refs.append( lang_mapping[lang_ref] )
 
-    if args.output_for_submssion:
+    if args.output_for_submission:
         print("You can check the output for the challenge submission in {args.output_for_submission}!")
     else:
         # -- computing WER
@@ -219,6 +219,9 @@ if __name__ == "__main__":
             print(f"Epoch {epoch}: TRAIN LOSS={train_loss} || VAL LOSS={val_loss} | VAL CER={val_cer}%")
             dst_check_path = save_model(args.output_dir, e2e, str(epoch).zfill(3))
             val_stats.append( (dst_check_path, val_cer) )
+
+            if self.config.training_settings['balanced_finetuning']:
+                train_loader = get_dataloader(config, dataset_path=args.training_dataset, audio_transforms=train_audio_transforms, tokenizer=tokenizer, converter=converter, filter_spkr_ids=args.filter_spkr_ids, filter_by_language=args.filter_by_language, is_training=True)
 
         # -- -- computing average model
         save_val_stats(args.output_dir, val_stats)

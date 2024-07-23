@@ -12,6 +12,7 @@ def get_dataloader(config, dataset_path, audio_transforms, tokenizer, converter,
         dataset_path=dataset_path,
         filter_spkr_ids=filter_spkr_ids,
         filter_by_language=filter_by_language,
+        is_training=is_training,
     )
 
     # -- defining dataloader

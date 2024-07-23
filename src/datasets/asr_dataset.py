@@ -10,7 +10,7 @@ class ASRDataset(Dataset):
     """Dataset to load the BBS-S2TC data.
     """
 
-    def __init__(self, config, dataset_path, filter_spkr_ids=['all-spkrs'], filter_by_language=['all-langs']):
+    def __init__(self, config, dataset_path, filter_spkr_ids=['all-spkrs'], filter_by_language=['all-langs'], is_training=True):
         # -- config
         self.config = config
 
@@ -18,8 +18,21 @@ class ASRDataset(Dataset):
         self.dataset = pd.read_csv(dataset_path, delimiter=',', dtype={"speaker_id": "string"})
         self.dataset['sample_id'] = self.dataset['path'].map(lambda x: x.split('/')[-1])
 
-        # prctg = int(len(self.dataset) * 0.1)
-        # self.dataset = self.dataset[:prctg]
+        if self.config.training_settings['balanced_finetuning'] and is_training:
+            bi_nsamples = len(self.dataset[self.dataset['language'] == 'bi'])
+            es_nsamples = len(self.dataset[self.dataset['language'] == 'es'])
+            eu_nsamples = len(self.dataset[self.dataset['language'] == 'eu'])
+
+            balanced_es_dataset = self.dataset[self.dataset['language'] == 'es'].sample(frac=bi_nsamples/es_nsamples)
+            balanced_eu_dataset = self.dataset[self.dataset['language'] == 'eu'].sample(frac=bi_nsamples/eu_nsamples)
+            bi_dataset = self.dataset[self.dataset['language'] == 'bi']
+
+            self.dataset = pd.concat([balanced_es_dataset, balanced_eu_dataset, bi_dataset])
+            print(f'Balanced Dataset: \n\tSpanish: {self.dataset[self.dataset["language"] == "es"]["length"].sum()} seconds\n'
+                  f'\tBasque: {self.dataset[self.dataset["language"] == "eu"]["length"].sum()} seconds\n'
+                  f'\tBilingual: {self.dataset[self.dataset["language"] == "bi"]["length"].sum()} seconds\n'
+            )
+
 
         # -- filtering by duration
         self.dataset = self.dataset[self.dataset['length'] <= 13]

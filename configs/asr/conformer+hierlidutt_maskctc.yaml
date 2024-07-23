@@ -103,23 +103,29 @@ inference_conf:
 
 # token related
 token_type: bpe
-bpemodel: "./src/tokenizers/spm/bbs-s2tc/256vocab/all_clean_data+langs.model"
-token_list: "./src/tokenizers/spm/bbs-s2tc/256vocab/all_clean_data+langs.token"
+bpemodel: "./src/tokenizers/spm/bbs-s2tc/256vocab/all_train_clean_data+langs.model"
+token_list: "./src/tokenizers/spm/bbs-s2tc/256vocab/all_train_clean_data+langs.token"
 
 # training related
 training_settings:
-  optimizer: "adam"
-  scheduler: "noam"
+  # optimizer: "adam"
+  optimizer: "adamw"
+  # scheduler: "noam"
+  scheduler: "onecycle"
   batch_size: 32
-  warmup_steps: 10000
-  learning_rate: 0.001
-  noam_factor: 1.6
+  # warmup_steps: 10000
+  # learning_rate: 0.001
+  learning_rate: 0.0004
+  # noam_factor: 1.6
   accum_grad: 1
   grad_clip: -1.0
-  epochs: 50
-  average_epochs: 10
+  # epochs: 50
+  epochs: 5
+  # average_epochs: 10
+  average_epochs: 1
   use_amp: false
   num_workers: 8
+  balanced_finetuning: true
 
 dtype: "float32"
 device: "cuda"
