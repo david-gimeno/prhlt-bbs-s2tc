@@ -220,7 +220,7 @@ if __name__ == "__main__":
             dst_check_path = save_model(args.output_dir, e2e, str(epoch).zfill(3))
             val_stats.append( (dst_check_path, val_cer) )
 
-            if self.config.training_settings['balanced_finetuning']:
+            if config.training_settings['balanced_finetuning']:
                 train_loader = get_dataloader(config, dataset_path=args.training_dataset, audio_transforms=train_audio_transforms, tokenizer=tokenizer, converter=converter, filter_spkr_ids=args.filter_spkr_ids, filter_by_language=args.filter_by_language, is_training=True)
 
         # -- -- computing average model
